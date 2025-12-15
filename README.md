@@ -1,6 +1,6 @@
 # 🎅 TokenSanta - College Edition 2025
 
-![TokenSanta Banner](../Screenshots/banner.jpg)
+![TokenSanta Banner](./Screenshots/banner.jpg)
 
 > A secure, AI-powered Secret Santa experience designed for college campuses. No more paper chits—just tokens, vibes, and automated matchmaking.
 
@@ -56,12 +56,12 @@ Sends the unique Access Tokens to all students via Gmail/Nodemailer.
 
 | **The Gatekeeper (Login)** | **The Vibe Quiz** |
 |:---:|:---:|
-| ![Login Screen](../Screenshots/login.png) | ![Quiz Screen](../Screenshots/quiz.png) |
+| ![Login Screen](./Screenshots/login.png) | ![Quiz Screen](./Screenshots/quiz.png) |
 | *Secure Token Entry* | *AI-Powered Profiling* |
 
 | **Mission Hub (Classified)** | **The Reveal** |
 |:---:|:---:|
-| ![Mission Screen](../Screenshots/mission.png) | ![Reveal Screen](../Screenshots/reveal.png) |
+| ![Mission Screen](./Screenshots/mission.png) | ![Reveal Screen](./Screenshots/reveal.png) |
 | *View Clues & Tags* | *Identity Unlocked!* |
 
 ---
