@@ -7,7 +7,7 @@
 ## 📖 Overview
 **TokenSanta** is a modern web application built with **Next.js** and **Firebase** that modernizes the traditional Secret Santa game. Instead of drawing names from a hat, students use unique **Access Tokens** to log in, take a personality quiz, and get matched with a target.
 
-The system uses **AI (Pollinations/OpenAI)** to analyze quiz answers and generate witty, mysterious "Vibe Clues" so users can buy gifts based on personality rather than just a name.
+The system uses **Groq (Llama 3)** to analyze quiz answers and generate witty, mysterious "Vibe Clues" so users can buy gifts based on personality rather than just a name.
 
 ---
 
@@ -18,7 +18,7 @@ The system uses **AI (Pollinations/OpenAI)** to analyze quiz answers and generat
 2.  **The Vibe Check:** Users take a fun, college-themed personality quiz (e.g., *"What's your attendance strategy?"*).
 3.  **AI Profiling:** The system generates unique **#Tags** and **Mystery Clues** based on their answers.
 4.  **The Mission:** Users enter the "Mission Hub" where they see their target's clues (Identity is **CLASSIFIED**).
-5.  **The Reveal:** On the event date (e.g., Dec 24th), the countdown ends, and the target's identity is revealed!
+5.  **The Reveal:** On the event date (e.g., Dec 25th), the countdown ends, and the target's identity is revealed!
 
 ### 2. The Matching Logic (Fisher-Yates Shuffle)
 To ensure fair and collision-free pairings, the admin route uses the **Fisher-Yates Shuffle** algorithm:
@@ -64,6 +64,11 @@ Sends the unique Access Tokens to all students via Gmail/Nodemailer.
 | ![Mission Screen](./Screenshots/mission.png) | ![Reveal Screen](./Screenshots/reveal.png) |
 | *View Clues & Tags* | *Identity Unlocked!* |
 
+| **The Invitation (Email)** | |
+|:---:|:---:|
+| ![Email Notification](./Screenshots/gmail.png) | |
+| *Secure Token Delivery via Gmail* | |
+
 ---
 
 ## 🛠️ Tech Stack
@@ -72,7 +77,7 @@ Sends the unique Access Tokens to all students via Gmail/Nodemailer.
 * **Language:** TypeScript
 * **Database:** Firebase Firestore
 * **Styling:** Tailwind CSS + Shadcn UI
-* **AI Engine:** Pollinations.ai (Free OpenAI Wrapper)
+* **AI Engine:** Groq SDK (Llama 3.3)
 * **Email Service:** Nodemailer (Gmail SMTP)
 * **Animations:** Lucide React, CSS Keyframes
 
@@ -104,6 +109,9 @@ Sends the unique Access Tokens to all students via Gmail/Nodemailer.
     NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your-project.appspot.com
     NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
     NEXT_PUBLIC_FIREBASE_APP_ID=your_app_id
+
+    # --- AI CONFIG (Groq) ---
+    GROQ_API_KEY=gsk_your_groq_api_key_here
 
     # --- ADMIN SECRETS ---
     ADMIN_SECRET=MySuperSecretPassword123
