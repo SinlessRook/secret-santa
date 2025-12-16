@@ -103,10 +103,10 @@ export async function POST(req: NextRequest) {
            - Clue 1: Witty observation about '${answers.spot}' and '${answers.weapon}'.
            - Clue 2: Rumor based on Secret Hint: "${answers.reveal}".
            
-           - Clue 3 (THE IMPOSSIBLE CIPHER): 
+           - Clue 3 (THE IMPOSSIBLE CIPHER very tough one): 
              You MUST output the "Error Protocol" and "Encrypted Data" exactly.
              Frame it as a "System Dump" from "${locationFlavor}".
-             **CRITICAL: DO NOT EXPLAIN HOW TO SOLVE IT.** Just give the raw data.
+             **CRITICAL: DO NOT EXPLAIN HOW TO SOLVE IT and make the operation as opaque as possible.** Just give the raw data.
 
              Example: "CRITICAL FAILURE at Color Rings. [Error Protocol]. Data Packet: [Encrypted Data]"
 
