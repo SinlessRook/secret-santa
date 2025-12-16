@@ -54,7 +54,7 @@ export async function POST(req: NextRequest) {
             </div>
 
             <div style="text-align: center; margin-top: 30px;">
-              <a href="http://localhost:3000" style="background-color: #dc2626; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; font-weight: bold;">Login to Dashboard</a>
+              <a href="https://secret-santa-three-brown.vercel.app" style="background-color: #dc2626; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; font-weight: bold;">Login to Dashboard</a>
               <p style="font-size: 12px; color: #999; margin-top: 20px;">Do not share this token with anyone!</p>
             </div>
           </div>
