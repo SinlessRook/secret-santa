@@ -1,162 +1,161 @@
 import { db } from "@/lib/firebase";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { NextRequest, NextResponse } from "next/server";
+import Groq from "groq-sdk";
+
+const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
+
+// --- ☠️ 5-SEARCH HARDCORE CIPHERS (JUMBLED EDITION) ---
+function generateHardMECPuzzle(name: string) {
+  // 1. CLEAN THE NAME
+  const cleanName = name.toUpperCase().replace(/[^A-Z]/g, '');
+  
+  // 2. JUMBLE THE LETTERS (The Anagram Step)
+  // SNEHA -> HANSE
+  const scrambledName = cleanName.split('').sort(() => 0.5 - Math.random()).join('');
+
+  const methods = ["ATOMIC", "THE_ONION", "FREQUENCY_HOP"];
+  const selectedMethod = methods[Math.floor(Math.random() * methods.length)];
+
+  let result = "";
+  let errorType = "";
+
+  switch (selectedMethod) {
+    case "ATOMIC":
+      // Map JUMBLED letters to Atomic Numbers
+      // User gets: 1, 13, 7, 16, 63 (H, A, N, S, E) -> Must arrange to SNEHA
+      const atomicMap: Record<string, number> = {
+        A: 13, B: 5, C: 6, D: 66, E: 63, F: 9, G: 31, H: 1, I: 53, J: 55, K: 19, 
+        L: 3, M: 12, N: 7, O: 8, P: 15, Q: 84, R: 88, S: 16, T: 22, U: 92, V: 23, 
+        W: 74, X: 54, Y: 39, Z: 40
+      };
+      
+      const atomicCodes = scrambledName.split('').map(c => atomicMap[c] || "0");
+      result = atomicCodes.join(' - ');
+      errorType = "CHEM LAB ACCIDENT: Sample Containers Jumbled. Identify Elements by Proton Count, then Reassemble the Name.";
+      break;
+
+    case "THE_ONION":
+      // Jumbled -> Hex -> Base64
+      // Hint tells them it's "High Entropy" (Scrambled)
+      const hex = scrambledName.split('').map(c => c.charCodeAt(0).toString(16).toUpperCase()).join('');
+      const base64 = Buffer.from(hex).toString('base64');
+      
+      result = base64;
+      errorType = "LAYER 7 ENCRYPTION (PACKET LOSS DETECTED). Protocol: Base64 -> Hex -> ASCII. Warning: Data Stream is UNSORTED.";
+      break;
+
+    case "FREQUENCY_HOP":
+      // Jumbled -> ASCII Codes
+      result = scrambledName.split('').map(c => c.charCodeAt(0)).join(' || ');
+      errorType = "RADIO SIGNAL SCRAMBLED. Tune to these ASCII Frequencies (Hz). Decode letters and Unscramble.";
+      break;
+  }
+
+  return { result, errorType };
+}
 
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
     const { token, answers } = body;
 
-    // 1. Basic Validation
-    if (!token || !answers) {
-      return NextResponse.json({ error: "Missing data" }, { status: 400 });
-    }
+    if (!token || !answers) return NextResponse.json({ error: "Missing data" }, { status: 400 });
 
     const userRef = doc(db, "users", token);
     const userSnap = await getDoc(userRef);
-
-    if (!userSnap.exists()) {
-      return NextResponse.json({ error: "Invalid Token" }, { status: 401 });
-    }
+    if (!userSnap.exists()) return NextResponse.json({ error: "Invalid Token" }, { status: 401 });
 
     const userData = userSnap.data();
-    const studentName = userData?.name || "The Student"; // Needed for the name riddle
+    const studentName = userData?.name || "The Student";
+
+    // 1. GENERATE THE JUMBLED PUZZLE
+    const puzzle = generateHardMECPuzzle(studentName);
+
+    // 2. FLAVOR TEXT
+    const mecLocations = [
+      "the long queue at the Photostat Shop (Color Rings)", 
+      "a dark corner of Mad Elsker Cafe", 
+      "the backstage of Caza", 
+      "the registration desk at Elga", 
+      "a corrupted Excel server"
+    ];
+    const locationFlavor = mecLocations[Math.floor(Math.random() * mecLocations.length)];
 
     let aiProfile = null;
 
-    // 2. ATTEMPT AI GENERATION (Using Pollinations.ai)
+    // 3. AI CALL
     try {
-      // Construct a specific prompt for 3 clues
       const prompt = `
-        You are a Secret Santa Profile Generator.
-        Analyze this student:
-        - Name: ${studentName}
-        - Answers: ${JSON.stringify(answers)}
-        - Secret Hint (User input): "${answers.reveal || 'None'}"
+        You are "MEC-BOT", the sarcastic AI of Model Engineering College.
+        Target: "${studentName}"
+        User Data: ${JSON.stringify(answers)}
+        Secret Hint: "${answers.reveal || 'None'}"
+        MEC Context: Mention "${locationFlavor}".
 
-        Generate a JSON object with exactly two fields:
-        1. "tags": Array of 3 short hashtags (e.g. ["#Gamer", "#Foodie"]).
-        2. "clues": An array of exactly 3 strings (Clues):
-           - Clue 1: Combine their location ('${answers.spot}') and item ('${answers.weapon}') into a witty observation.
-           - Clue 2: Use their 'Secret Hint' ("${answers.reveal}") but make it sound like a rumor or whisper. If 'Secret Hint' is empty, use their 'Gift' preference. Do NOT reveal their name.
-           - Clue 3: A creative riddle about the spelling of their name "${studentName}". (e.g., "Starts with S and ends with A", or "A name of 5 letters"). DO NOT say the name directly.
+        **MANDATORY CLUE 3 DATA:**
+        - Error Protocol: "${puzzle.errorType}"
+        - Encrypted Data: "${puzzle.result}"
 
-        Return ONLY the raw JSON string.
+        Task: Generate valid JSON with:
+        1. "tags": 3 hashtags using MEC slang (e.g. #MECian, #ElgaVibes, #CazaNights).
+        2. "clues": Array of 3 strings.
+           - Clue 1: Witty observation about '${answers.spot}' and '${answers.weapon}'.
+           - Clue 2: Rumor based on Secret Hint: "${answers.reveal}".
+           
+           - Clue 3 (THE IMPOSSIBLE CIPHER): 
+             You MUST output the "Error Protocol" and "Encrypted Data" exactly.
+             Frame it as a "System Dump" from "${locationFlavor}".
+             **CRITICAL: DO NOT EXPLAIN HOW TO SOLVE IT.** Just give the raw data.
+
+             Example: "CRITICAL FAILURE at Color Rings. [Error Protocol]. Data Packet: [Encrypted Data]"
+
+        Return ONLY JSON.
       `;
 
-      const aiResponse = await fetch('https://text.pollinations.ai/', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
+      const completion: any = await Promise.race([
+        groq.chat.completions.create({
           messages: [
-            { role: 'system', content: 'You are a creative JSON generator.' },
-            { role: 'user', content: prompt }
+             { role: "system", content: "You are a cryptic college AI." },
+             { role: "user", content: prompt }
           ],
-          model: 'openai',
-          jsonMode: true
+          model: "llama-3.3-70b-versatile",
+          temperature: 0.8,
+          response_format: { type: "json_object" },
         }),
-      });
+        new Promise((_, reject) => setTimeout(() => reject(new Error("Timeout")), 8000))
+      ]);
 
-      if (!aiResponse.ok) throw new Error("Pollinations API Error");
+      const content = completion.choices[0]?.message?.content;
+      if (content) aiProfile = JSON.parse(content);
 
-      const text = await aiResponse.text();
-      const cleanText = text.replace(/```json/g, "").replace(/```/g, "").trim();
-      aiProfile = JSON.parse(cleanText);
-
-    } catch (aiError) {
-      console.warn("⚠️ AI Failed. Switching to Manual Fallback.");
-      aiProfile = generateFallbackProfile(answers, studentName);
+    } catch (e) {
+      console.warn("Using Fallback.");
     }
 
-    // 3. Fallback Safety Check
-    if (!aiProfile || !aiProfile.tags || !Array.isArray(aiProfile.clues)) {
-       aiProfile = generateFallbackProfile(answers, studentName);
+    // 4. FALLBACK
+    if (!aiProfile) {
+      aiProfile = {
+        tags: ["#MEC", "#Excel", "#SystemFailure"],
+        clues: [
+          `Target spotted near ${answers.spot} holding ${answers.weapon}.`,
+          `Intercepted at ${locationFlavor}: "${answers.reveal || "A mystery gift needed."}"`,
+          `SYSTEM CRASH: ${puzzle.errorType} \nDATA: [ ${puzzle.result} ]`
+        ]
+      };
     }
 
-    // 4. Save to Firebase
     await updateDoc(userRef, {
-      answers: answers,
+      answers,
       tags: aiProfile.tags,
-      clues: aiProfile.clues, // Now saving an Array of 3 strings
+      clues: aiProfile.clues,
       isRegistered: true,
       updatedAt: new Date().toISOString()
     });
 
-    return NextResponse.json({ 
-      success: true, 
-      generatedProfile: aiProfile 
-    });
+    return NextResponse.json({ success: true, generatedProfile: aiProfile });
 
   } catch (error: any) {
-    console.error("Critical System Error:", error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
-}
-
-// --- 🎲 THE 3-CLUE FALLBACK GENERATOR ---
-function generateFallbackProfile(answers: any, name: string) {
-  const tags: string[] = [];
-  
-  // 1. Tag Logic (Same as before)
-  const tagMap: Record<string, string> = {
-    "Coffee": "CaffeineAddict", "Red Bull": "WingsGiven", "Tea": "ChaiLover",
-    "Gaming": "Gamer", "Reading": "Bookworm", "Music": "#VibeCurator",
-    "Library": "Scholar", "BackBench": "BackBencher", "Canteen": "Foodie",
-    "Techie": "TechBro", "Artist": "CreativeSoul"
-  };
-
-  if (tagMap[answers.weapon]) tags.push(tagMap[answers.weapon]);
-  if (tagMap[answers.hobby]) tags.push(tagMap[answers.hobby]);
-  if (tagMap[answers.spot]) tags.push(tagMap[answers.spot]);
-  
-  const genericTags = ["Student", "Campus", "SecretSanta", "VibeCheck"];
-  while (tags.length < 3) tags.push(genericTags[tags.length]);
-
-  // 2. CLUE GENERATION (The 3 Specific Logics)
-
-  // --- Clue 1: Vibe/Location (Mad Libs) ---
-  const mood: Record<string, string> = { "Coffee": "caffeinated", "Red Bull": "hyperactive", "Gaming": "competitive" };
-  const action: Record<string, string> = { "Library": "studying silently", "BackBench": "sleeping", "Ground": "running" };
-  
-  const adj = mood[answers.weapon] || "mysterious";
-  const act = action[answers.spot] || "hanging out";
-  
-  const clue1Options = [
-    `WANTED: A ${adj} student known for ${answers.hobby || "stuff"} and ${act} in the ${answers.spot || "campus"}.`,
-    `This agent is usually found in the ${answers.spot || "hallway"} with a ${answers.weapon || "drink"} in hand.`,
-    `Look for the ${answers.vibe || "student"} who survives solely on ${answers.weapon || "hope"}.`
-  ];
-  const clue1 = clue1Options[Math.floor(Math.random() * clue1Options.length)];
-
-  // --- Clue 2: The Secret Hint (Indirect) ---
-  let clue2 = "";
-  if (answers.reveal && answers.reveal.length > 3) {
-    // If they typed something custom
-    const hints = [
-      `Rumor has it: "${answers.reveal}"`,
-      `They once whispered that "${answers.reveal}"`,
-      `A secret dossier mentions: "${answers.reveal}"`
-    ];
-    clue2 = hints[Math.floor(Math.random() * hints.length)];
-  } else {
-    // Fallback if they didn't type anything specific
-    clue2 = `This student is secretly obsessed with ${answers.gift || "surprises"}.`;
-  }
-
-  // --- Clue 3: Name Riddle (Heuristic) ---
-  const firstChar = name.charAt(0).toUpperCase();
-  const lastChar = name.charAt(name.length - 1).toUpperCase();
-  const nameLen = name.length;
-  
-  const clue3Options = [
-    `The target's name starts with the letter '${firstChar}' and ends with '${lastChar}'.`,
-    `A name of exactly ${nameLen} letters.`,
-    `Look for a name beginning with '${firstChar}'.`
-  ];
-  const clue3 = clue3Options[Math.floor(Math.random() * clue3Options.length)];
-
-  return {
-    tags: tags.slice(0, 3), 
-    clues: [clue1, clue2, clue3] // Return array of 3 strings
-  };
 }
