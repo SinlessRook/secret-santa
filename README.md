@@ -88,7 +88,7 @@ Sends the unique Access Tokens to all students via Gmail/Nodemailer.
 1.  **Clone the repository**
     ```bash
     git clone https://github.com/sinlessrook/secret-santa.git
-    cd token-santa
+    cd secret-santa
     ```
 
 2.  **Install Dependencies**
