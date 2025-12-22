@@ -26,14 +26,25 @@ export async function POST(req: NextRequest) {
     }
     // -------------------------
 
+    // 1. GET DATA (From Body OR Static File)
+    const body = await req.json().catch(() => ({})); // Handle empty body safely
+    const dataToSeed: Student[] = body.data || STUDENT_LIST;
+
+    if (!Array.isArray(dataToSeed) || dataToSeed.length === 0) {
+        return NextResponse.json({ error: "Invalid Data: Must be a non-empty array." }, { status: 400 });
+    }
+
     const batch = writeBatch(db);
     const generatedData: { name: string; token: string }[] = []; 
 
-    STUDENT_LIST.forEach((student: Student) => {
-      // 1. Generate Token
+    console.log(`Seeding ${dataToSeed.length} entries...`);
+
+    dataToSeed.forEach((student: Student) => {
+      // 2. Generate Token
       const token = generateToken();
 
-      // 2. Prepare Database Entry
+      // 3. Prepare Database Entry
+      // Note: We use the token as the Document ID
       const userRef = doc(db, "users", token);
       
       batch.set(userRef, {
@@ -46,14 +57,14 @@ export async function POST(req: NextRequest) {
         createdAt: new Date().toISOString()
       });
 
-      // 3. Keep record for printing
+      // 4. Keep record for printing
       generatedData.push({
         name: student.name,
         token: token
       });
     });
 
-    // 4. Commit to DB
+    // 5. Commit to DB
     await batch.commit();
 
     return NextResponse.json({ 
