@@ -6,9 +6,9 @@ export interface Student {
 }
 
 export const STUDENT_LIST: Student[] = [
-  { name: "Alice Johnson", email: ""},
-  { name: "Bob Smith", email: "" },
-  { name: "Charlie Brown", email: "" },
-  { name: "Diana Prince", email: "" },
-  { name: "Ethan Hunt", email: "" },
+  { name: "Alice Johnson", email: "aliceJ@example.com"},
+  { name: "Bob Smith", email: "bobS@example.com" },
+  { name: "Charlie Brown", email: "charlieB@example.com" },
+  { name: "Diana Prince", email: "dianaP@example.com" },
+  { name: "Ethan Hunt", email: "ethanH@example.com" },
 ];
