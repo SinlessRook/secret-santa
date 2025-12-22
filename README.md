@@ -31,24 +31,31 @@ To ensure fair and collision-free pairings, the admin route uses the **Fisher-Ya
 
 ---
 
-## 👮 Admin API Guide
+## 🕹️ The Admin Command Center
 
-The application includes secured API routes for administrative tasks (Seeding, Matching, Emailing). These endpoints are protected by the `ADMIN_SECRET` environment variable to prevent unauthorized access.
+Gone are the days of manual API calls. The **Admin Dashboard** is a fully responsive, secured "Mission Control" interface designed for mobile and desktop. It features a Cyberpunk/Hacker aesthetic to match the secrecy of the event.
 
-**Required Header:**
-`x-admin-secret: <Your_Secret_Password>`
+### Dashboard Features
 
-### 1. Trigger Matchmaking
-Shuffles registered users and assigns Secret Santa targets.
-* **Method:** `POST`
-* **Endpoint:** `/api/admin/match`
-* **Action:** Runs the Fisher-Yates algorithm and updates every user document with a `targetToken`. Sets the global Reveal Date.
+1.  **Operative List (Users Tab):**
+    
+    * **Real-time Roster:** View all registered "Elves" and their status.
+    * **Live Status Indicators:** Instantly see who has registered (Green) and who is still pending (Yellow).
+    * **Match Verification:** Visual confirmation (Green Dot) when a target has been successfully assigned to a user.
 
-### 2. Email Blast
-Sends the unique Access Tokens to all students via Gmail/Nodemailer.
-* **Method:** `POST`
-* **Endpoint:** `/api/admin/email`
-* **Action:** Iterates through the database and sends a styled HTML email to every user containing their specific Login Token.
+2.  **System Controls (Controls Tab):**
+
+    * **Global Reveal Timer:** Set the exact ISO timestamp for when the "Reveal" page unlocks for all students.
+    * **Match Algo Trigger:** One-click execution of the Fisher-Yates matching engine.
+    * **Dispatch Protocol:** Triggers the Nodemailer pipeline to blast emails with access tokens.
+
+3.  **Raw Data Editor (Data Tab):**
+
+
+    * **JSON Manifest:** Full read/write access to the student list JSON before seeding.
+    * **Factory Reset:** A "Nuclear Option" to wipe the Firestore database and re-seed it from the editor's current state.
+
+---
 
 ---
 
@@ -64,10 +71,10 @@ Sends the unique Access Tokens to all students via Gmail/Nodemailer.
 | ![Mission Screen](./Screenshots/mission.png) | ![Reveal Screen](./Screenshots/reveal.png) |
 | *View Clues & Tags* | *Identity Unlocked!* |
 
-| **The Invitation (Email)** | |
+| **The Invitation (Email)** | **Admin Mobile View** |
 |:---:|:---:|
-| ![Email Notification](./Screenshots/gmail.png) | |
-| *Secure Token Delivery via Gmail* | |
+| ![Email Notification](./Screenshots/gmail.png) | ![Admin Mobile](./Screenshots/admin-dashboard.png) |
+| *Secure Token Delivery via Gmail* | *Responsive Admin Panel* |
 
 ---
 
@@ -79,7 +86,7 @@ Sends the unique Access Tokens to all students via Gmail/Nodemailer.
 * **Styling:** Tailwind CSS + Shadcn UI
 * **AI Engine:** Groq SDK (Llama 3.3)
 * **Email Service:** Nodemailer (Gmail SMTP)
-* **Animations:** Lucide React, CSS Keyframes
+* **Animations:** Lucide React, CSS Keyframes, React Snowfall
 
 ---
 
@@ -87,8 +94,8 @@ Sends the unique Access Tokens to all students via Gmail/Nodemailer.
 
 1.  **Clone the repository**
     ```bash
-    git clone https://github.com/sinlessrook/secret-santa.git
-    cd secret-santa
+    git clone [https://github.com/sinlessrook/token-santa.git](https://github.com/sinlessrook/token-santa.git)
+    cd token-santa
     ```
 
 2.  **Install Dependencies**
